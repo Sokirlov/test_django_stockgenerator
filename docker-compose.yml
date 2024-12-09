@@ -1,0 +1,86 @@
+version: "2.30.3"
+services:
+  redis:
+    image: redis
+    container_name: redis
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - local_network
+
+  postgres:
+    image: postgres:17.2-alpine
+    container_name: postgres
+    volumes:
+      - psql_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: $DB_NAME
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", $DB_NAME, "-U", $DB_USER ]
+      timeout: 3s
+      retries: 20
+    networks:
+      - local_network
+
+  app:
+    build: .
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./:/app"
+    networks:
+      - my_network
+      - local_network
+    command: ["gunicorn", "--bind", ":8000", "--log-level", "info", "settings.wsgi:application",]
+
+  worker:
+    build: .
+    container_name: celery_worker
+    restart: always
+    depends_on:
+      - redis
+      - app
+    env_file:
+      - .env
+    volumes:
+      - "./:/app"
+    networks:
+      - local_network
+    command: celery -A settings worker -l info
+
+  beat:
+    build: .
+    container_name: celery_beat
+    restart: always
+    depends_on:
+      worker:
+        condition: service_started
+    env_file:
+      - .env
+    volumes:
+      - "./:/app"
+    networks:
+      - local_network
+    command: celery -A settings beat -l info -S django
+
+networks:
+  my_network:
+    driver: bridge
+  local_network:
+    internal: false
+
+volumes:
+  redis_data:
+  psql_data:
