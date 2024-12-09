@@ -17,31 +17,22 @@ In this project, I used the following technologies:
 
 
 ----
+## Start project
+
+
+```shell
+docker-compose up --build
+```
 
 
 
+___
 This project include functionality:
 
 - [Registration and authorization](#authentication) url: /auth/
-
 - [Base logic](#models)
-
 - [Api](#api_endpoints)
 - [Websocket](#websocket) 
-
-[//]: # ()
-
-[//]: # ()
-[//]: # (So, on index url you can view [swagger]&#40;'http://localhost:8000/'&#41;. It helps you with api endpoints)
-
-[//]: # ()
-[//]: # (It has products, currency prices and discounts.<br />)
-
-[//]: # (The peculiarity is that prices for products that )
-
-[//]: # (are added to discounts can be generated automatically )
-
-[//]: # (using Celery or you can call it manually.)
 
 
 ## Authentication
