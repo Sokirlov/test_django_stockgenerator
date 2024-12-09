@@ -26,8 +26,8 @@ This project include functionality:
 
 - [Base logic](#models)
 
-- [Api](#api_endpoints-)
-- [Websocket](#websocket-) 
+- [Api](#api_endpoints)
+- [Websocket](#websocket) 
 
 [//]: # ()
 
