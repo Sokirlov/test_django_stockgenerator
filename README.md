@@ -19,12 +19,32 @@ In this project, I used the following technologies:
 ----
 ## Start project
 
+The project requires the following Docker images:  
+- `python:3.12-slim`  
+- `redis`  
+- `postgres:17.2-alpine`  
 
+Then you need setup `.env` file
+
+After setup run project
 ```shell
-docker-compose up --build
+docker compose up --build
 ```
+After project is up, you need:
+1. Create database 
+    ```shell
+    docker exec -it postgres psql -U <DB_USER> -c "CREATE DATABASE <DB_NAME>;"
+    ```
+2. Connect to container, create and apply migrations, create superuser
+    ```shell
+   docker exec -it my_app bash
+   python manage.py makemigrations
+   python manage.py migrate
+   python manage.py createsuperuser
+    exit 
+    ```
 
-
+_First RUN  script in progres..._
 
 ___
 This project include functionality:
